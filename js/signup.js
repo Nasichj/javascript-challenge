@@ -66,6 +66,10 @@
  function validateForm(evt)
  {
      try {
+         var missed = "";
+         var ziperr = "";
+         var phoneerr = "";
+         var birtherr = "";
 
          var err = 0;
          var firstName = document.getElementsByName("firstName")[0];
@@ -77,36 +81,52 @@
          var birthdate = document.getElementsByName("birthdate")[0];
          var occupation = document.getElementById("occupation");
          var txt = document.getElementsByName("occupationOther")[0];
+         var phone = document.getElementById("phone");
 
          firstName.style.border = 'none';
          if (removeSpace(firstName.value) == "")
          {
              err++;
              firstName.style.border = '1px solid red';
+             if (missed != "")
+                 missed += ", ";
+             missed += "firstName";
          }
          lastName.style.border = 'none';
          if (removeSpace(lastName.value) == "")
          {
              err++;
              lastName.style.border = '1px solid red';
+             if (missed != "")
+                 missed += ", ";
+             missed += "lastName";
          }
          address1.style.border = 'none';
          if (removeSpace(address1.value) == "")
          {
              err++;
              address1.style.border = '1px solid red';
+             if (missed != "")
+                 missed += ", ";
+             missed += "address1";
          }
          city.style.border = 'none';
          if (removeSpace(city.value) == "")
          {
              err++;
              city.style.border = '1px solid red';
+             if (missed != "")
+                 missed += ", ";
+             missed += "city";
          }
          state.style.border = 'none';
          if (removeSpace(state.value) == "")
          {
              err++;
              state.style.border = '1px solid red';
+             if (missed != "")
+                 missed += ", ";
+             missed += "state";
          }
          zip.style.border = 'none';
          var zipRegExp = new RegExp('^\\d{5}$');
@@ -114,6 +134,16 @@
          {
              err++;
              zip.style.border = '1px solid red';
+             if (removeSpace(zip.value) == "")
+             {
+                 if (missed != "")
+                     missed += ", ";
+                 missed += "zip";
+             }
+             else
+             {
+                 ziperr = "\nZIP code must be 5 digits";
+             }
          }
 
          txt.style.border = 'none';
@@ -121,30 +151,51 @@
          {
              err++;
              txt.style.border = '1px solid red';
+             if (missed != "")
+                 missed += ", ";
+             missed += "occupation";
          }
 
-         //var dt = parseDate(birthdate.value);
-         var dt = new Date(birthdate.value);
+         var date = new Date(birthdate.value);
          var now = new Date();
          birthdate.style.border = 'none';
          var msg = document.getElementById("birthdateMessage");
          msg.innerHTML = "";
-         if (isNaN(dt))
+         if (isNaN(date))
          {
              err++;
              birthdate.style.border = '1px solid red';
+             if (missed != "")
+                 missed += ", ";
+             missed += "birthdate";
          }
          else
          {
-             var ag = now.getUTCFullYear() - dt.getUTCFullYear();
+             var ag = now.getUTCFullYear() - date.getUTCFullYear();
              if (ag < 13)
              {
                  err++;
                  birthdate.style.border = '1px solid red';
                  msg.innerHTML = "The user must be 13 years or older to sign up";
+                 birtherr = "\nThe user must be 13 years or older to sign up";
              }
          }
 
+         var phonenum = removeSpace(phone.value);
+         if (phonenum != "")
+         {
+             var phoneExp = new RegExp('^\\d+$');
+             if (phoneExp.test(phonenum) == false)
+                 phoneerr = "\nThe phone number must be digits";
+         }
+
+         if (err > 0)
+         {
+             var errmsg = "";
+             if (missed != "")
+                 errmsg = "The following required fields are missing: " + missed;
+             alert(errmsg + ziperr + phoneerr);
+         }
 
      }
      catch(e)
